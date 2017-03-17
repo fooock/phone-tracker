@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 /**
  *
  */
-public class BaseService extends Service {
+abstract class BaseService extends Service {
 
     @Nullable
     @Override
