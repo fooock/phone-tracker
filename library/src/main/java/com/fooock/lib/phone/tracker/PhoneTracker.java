@@ -3,6 +3,7 @@ package com.fooock.lib.phone.tracker;
 import android.Manifest;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -15,17 +16,27 @@ import java.util.Objects;
 public class PhoneTracker {
     private static final String TAG = PhoneTracker.class.getSimpleName();
 
+    /**
+     * Permissions used for gps and cell location. Note that for android >= 6 this permissions are
+     * needed for scan wifi and bluetooth
+     */
     private static final String[] LOCATION_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
-    private static final String[] WIFI_PERMISSIONS = new String[] {
+    /**
+     * Permissions used to scan wifi AP's
+     */
+    private static final String[] WIFI_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_WIFI_STATE,
             Manifest.permission.CHANGE_WIFI_STATE
     };
 
-    private static final String[] BLUETOOTH_PERMISSIONS = new String[] {
+    /**
+     * Permissions used to scan for bluetooth
+     */
+    private static final String[] BLUETOOTH_PERMISSIONS = new String[]{
             Manifest.permission.BLUETOOTH
     };
 
@@ -37,6 +48,10 @@ public class PhoneTracker {
 
     private boolean running;
 
+    private WifiReceiver wifiReceiver;
+    private CellReceiver cellReceiver;
+    private GpsReceiver gpsReceiver;
+    private BluetoothReceiver bluetoothReceiver;
     private Configuration configuration;
 
     /**
@@ -121,6 +136,22 @@ public class PhoneTracker {
             }
         }
 
+        if (usingWifi) {
+            wifiReceiver = new WifiReceiver();
+            wifiReceiver.register();
+        }
+        if (usingCell) {
+            cellReceiver = new CellReceiver();
+            cellReceiver.register();
+        }
+        if (usingGps) {
+            gpsReceiver = new GpsReceiver();
+            gpsReceiver.register();
+        }
+        if (usingBluetooth) {
+            bluetoothReceiver = new BluetoothReceiver();
+            bluetoothReceiver.register();
+        }
         synchronized (lock) {
             running = true;
         }
@@ -136,6 +167,18 @@ public class PhoneTracker {
                 Log.w(TAG, "Not running, can't stop...");
                 return;
             }
+        }
+        if (wifiReceiver != null) {
+            wifiReceiver.unregister();
+        }
+        if (cellReceiver != null) {
+            cellReceiver.unregister();
+        }
+        if (gpsReceiver != null) {
+            gpsReceiver.unregister();
+        }
+        if (bluetoothReceiver != null) {
+            bluetoothReceiver.unregister();
         }
         removePermissionListener();
         Log.d(TAG, "Stopped tracker");
@@ -170,7 +213,7 @@ public class PhoneTracker {
      *
      * @param configuration Configuration
      */
-    public void setConfiguration(Configuration configuration) {
+    public void setConfiguration(@NonNull Configuration configuration) {
         this.configuration = configuration;
     }
 
