@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -32,6 +33,9 @@ public class PhoneTracker {
     private final List<PermissionListener> permissionListeners = new ArrayList<>();
     private final CheckVersion checkVersion = new CheckVersion();
     private final CheckPermission checkPermission;
+    private final Object lock = new Object();
+
+    private boolean running;
 
     private Configuration configuration;
 
@@ -64,6 +68,13 @@ public class PhoneTracker {
      * Start the phone tracker
      */
     public void start() {
+        // If is running do nothing...
+        synchronized (lock) {
+            if (running) {
+                Log.d(TAG, "Tracker is running now...");
+                return;
+            }
+        }
         // If configuration is null then use the default configuration
         if (configuration == null) {
             configuration = new Configuration.Builder().create();
@@ -71,8 +82,13 @@ public class PhoneTracker {
 
         final boolean equalOrGreaterM = checkVersion.isEqualOrGreater(Build.VERSION_CODES.M);
 
+        final boolean usingWifi = configuration.usingWifi();
+        final boolean usingGps = configuration.usingGps();
+        final boolean usingBluetooth = configuration.usingBluetooth();
+        final boolean usingCell = configuration.usingCell();
+
         // Check for wifi scan permissions
-        if (configuration.usingWifi()) {
+        if (usingWifi) {
             // android m or greater need location permissions for scan wifi
             if (equalOrGreaterM
                     && !checkPermission.hasAnyPermission(LOCATION_PERMISSIONS)
@@ -82,14 +98,14 @@ public class PhoneTracker {
             }
         }
         // Check for gps permissions
-        if (configuration.usingGps()) {
+        if (usingGps) {
             if (equalOrGreaterM && !checkPermission.hasAnyPermission(LOCATION_PERMISSIONS)) {
                 notifyPermissionsNotGranted(LOCATION_PERMISSIONS);
                 return;
             }
         }
         // Check for bluetooth scan permissions
-        if (configuration.usingBluetooth()) {
+        if (usingBluetooth) {
             if (equalOrGreaterM
                     && !checkPermission.hasAnyPermission(LOCATION_PERMISSIONS)
                     && !checkPermission.hasPermissions(BLUETOOTH_PERMISSIONS)) {
@@ -98,11 +114,15 @@ public class PhoneTracker {
             }
         }
         // Check for cell scan permissions
-        if (configuration.usingCell()) {
+        if (usingCell) {
             if (equalOrGreaterM && !checkPermission.hasAnyPermission(LOCATION_PERMISSIONS)) {
                 notifyPermissionsNotGranted(LOCATION_PERMISSIONS);
                 return;
             }
+        }
+
+        synchronized (lock) {
+            running = true;
         }
         Log.d(TAG, "Starting now...");
     }
@@ -111,7 +131,18 @@ public class PhoneTracker {
      * Stop the phone tracker
      */
     public void stop() {
+        synchronized (lock) {
+            if (!running) {
+                Log.w(TAG, "Not running, can't stop...");
+                return;
+            }
+        }
         removePermissionListener();
+        Log.d(TAG, "Stopped tracker");
+
+        synchronized (lock) {
+            running = false;
+        }
     }
 
     /**
@@ -149,6 +180,9 @@ public class PhoneTracker {
      * @param permissions Permissions
      */
     private void notifyPermissionsNotGranted(String... permissions) {
+        if (permissionListeners.isEmpty()) {
+            return;
+        }
         for (PermissionListener permissionListener : permissionListeners) {
             permissionListener.onPermissionNotGranted(permissions);
         }
