@@ -8,7 +8,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -53,6 +52,7 @@ public class PhoneTracker {
     private GpsReceiver gpsReceiver;
     private BluetoothReceiver bluetoothReceiver;
     private Configuration configuration;
+    private ConfigurationChangeListener configurationChangeListener;
 
     /**
      * Listener to notify missing permissions
@@ -64,6 +64,19 @@ public class PhoneTracker {
          * @param permission Names of the permissions
          */
         void onPermissionNotGranted(String... permission);
+    }
+
+    /**
+     * Listener for tracker configuration changes. Changes on configuration are triggered when
+     * the method {@link #updateConfiguration(Configuration)} is called
+     */
+    public interface ConfigurationChangeListener {
+        /**
+         * Method called when the configuration change
+         *
+         * @param configuration New configuration
+         */
+        void onConfigurationChange(Configuration configuration);
     }
 
     /**
@@ -319,5 +332,19 @@ public class PhoneTracker {
 
         // Change the configuration
         setConfiguration(conf);
+
+        if (configurationChangeListener == null) {
+            return;
+        }
+        configurationChangeListener.onConfigurationChange(conf);
+    }
+
+    /**
+     * Set the listener for configuration changes
+     *
+     * @param listener Listener
+     */
+    public void setConfigurationChangeListener(ConfigurationChangeListener listener) {
+        this.configurationChangeListener = listener;
     }
 }

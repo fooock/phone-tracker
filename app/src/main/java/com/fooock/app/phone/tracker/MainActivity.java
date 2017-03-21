@@ -29,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Listen for configuration changes
+        phoneTracker.setConfigurationChangeListener(new PhoneTracker.ConfigurationChangeListener() {
+            @Override
+            public void onConfigurationChange(Configuration configuration) {
+                Log.d(TAG, "Tracker configuration changed!");
+            }
+        });
+
         // Check the state of the tracker
         boolean running = phoneTracker.isRunning();
         Log.d(TAG, "Running: " + running);
