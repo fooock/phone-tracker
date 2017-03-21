@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Check the state of the tracker
+        boolean running = phoneTracker.isRunning();
+        Log.d(TAG, "Running: " + running);
+
         // Create a new wifi configuration
         Configuration.Wifi wifiConf = new Configuration.Wifi();
         wifiConf.setScanDelay(3000);
@@ -58,6 +62,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         phoneTracker.start();
+
+        // Create a new configuration
+        Configuration configuration = new Configuration.Builder()
+                .useCell(true)
+                .useWifi(true)
+                .useGps(true)
+                .useBluetooth(false)
+                .create();
+
+        // Update the current configuration
+        phoneTracker.updateConfiguration(configuration);
     }
 
     @Override

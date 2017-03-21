@@ -137,19 +137,19 @@ public class PhoneTracker {
         }
 
         if (usingWifi) {
-            wifiReceiver = new WifiReceiver();
+            wifiReceiver = new WifiReceiver(configuration.wifiConfiguration());
             wifiReceiver.register();
         }
         if (usingCell) {
-            cellReceiver = new CellReceiver();
+            cellReceiver = new CellReceiver(configuration.cellConfiguration());
             cellReceiver.register();
         }
         if (usingGps) {
-            gpsReceiver = new GpsReceiver();
+            gpsReceiver = new GpsReceiver(configuration.gpsConfiguration());
             gpsReceiver.register();
         }
         if (usingBluetooth) {
-            bluetoothReceiver = new BluetoothReceiver();
+            bluetoothReceiver = new BluetoothReceiver(configuration.bluetoothConfiguration());
             bluetoothReceiver.register();
         }
         synchronized (lock) {
@@ -229,5 +229,95 @@ public class PhoneTracker {
         for (PermissionListener permissionListener : permissionListeners) {
             permissionListener.onPermissionNotGranted(permissions);
         }
+    }
+
+    /**
+     * Check if the tracker is running or not
+     *
+     * @return True if running, false if not
+     */
+    public boolean isRunning() {
+        synchronized (lock) {
+            return running;
+        }
+    }
+
+    /**
+     * Update the current configuration. If the tracker is not running this method only set
+     * the new configuration using the {@link #setConfiguration(Configuration)} method.
+     *
+     * @param conf Configuration
+     */
+    public void updateConfiguration(@NonNull Configuration conf) {
+        if (!isRunning()) {
+            setConfiguration(configuration);
+            return;
+        }
+        // If the old config is not using the wifi but the new config yes, then start
+        // the wifi
+        if (!configuration.usingWifi() && conf.usingWifi()) {
+            wifiReceiver = new WifiReceiver(conf.wifiConfiguration());
+            wifiReceiver.register();
+
+            // Unregister the wifi receiver if not needed more
+        } else if (configuration.usingWifi() && !conf.usingWifi()) {
+            wifiReceiver.unregister();
+            wifiReceiver = null;
+
+            // Reload wifi configuration
+        } else if (configuration.usingWifi() && conf.usingWifi()) {
+            wifiReceiver.reloadConfiguration(conf.wifiConfiguration());
+        }
+
+        // If the old config is not using the gps but the new config yes, then start
+        // the gps
+        if (!configuration.usingGps() && conf.usingGps()) {
+            gpsReceiver = new GpsReceiver(conf.gpsConfiguration());
+            gpsReceiver.register();
+
+            // Unregister the gps receiver if not needed more
+        } else if (configuration.usingGps() && !conf.usingGps()) {
+            gpsReceiver.unregister();
+            gpsReceiver = null;
+
+            // Reload gps configuration
+        } else if (configuration.usingGps() && conf.usingGps()) {
+            gpsReceiver.reloadConfiguration(conf.gpsConfiguration());
+        }
+
+        // If the old config is not using the cell but the new config yes, then start
+        // the cell
+        if (!configuration.usingCell() && conf.usingCell()) {
+            cellReceiver = new CellReceiver(conf.cellConfiguration());
+            cellReceiver.register();
+
+            // Unregister the cell receiver if not needed more
+        } else if (configuration.usingCell() && !conf.usingCell()) {
+            cellReceiver.unregister();
+            cellReceiver = null;
+
+            // Reload cell configuration
+        } else if (configuration.usingCell() && conf.usingCell()) {
+            cellReceiver.reloadConfiguration(conf.cellConfiguration());
+        }
+
+        // If the old config is not using the bluetooth but the new config yes, then start
+        // the bluetooth
+        if (!configuration.usingBluetooth() && conf.usingBluetooth()) {
+            bluetoothReceiver = new BluetoothReceiver(conf.bluetoothConfiguration());
+            bluetoothReceiver.register();
+
+            // Unregister the bluetooth receiver if not needed more
+        } else if (configuration.usingBluetooth() && !conf.usingBluetooth()) {
+            bluetoothReceiver.unregister();
+            bluetoothReceiver = null;
+
+            // Reload bluetooth configuration
+        } else if (configuration.usingBluetooth() && conf.usingBluetooth()) {
+            bluetoothReceiver.reloadConfiguration(conf.bluetoothConfiguration());
+        }
+
+        // Change the configuration
+        setConfiguration(conf);
     }
 }
