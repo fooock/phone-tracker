@@ -29,9 +29,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Create a new wifi configuration
+        Configuration.Wifi wifiConf = new Configuration.Wifi();
+        wifiConf.setScanDelay(3000);
+
+        // Create a new cell configuration
+        Configuration.Cell cellConf = new Configuration.Cell();
+
+        // Create a gps configuration
+        Configuration.Gps gpsConf = new Configuration.Gps();
+
+        // Create a bluetooth configuration
+        Configuration.Bluetooth bluetoothConf = new Configuration.Bluetooth();
+
         // Create a new configuration
         Configuration configuration = new Configuration.Builder()
+                .useCell(true).cell(cellConf)
+                .useWifi(true).wifi(wifiConf)
+                .useGps(true).gps(gpsConf)
+                .useBluetooth(true).bluetooth(bluetoothConf)
                 .create();
+
+        // Set the new init configuration
         phoneTracker.setConfiguration(configuration);
     }
 
