@@ -1,13 +1,17 @@
 package com.fooock.app.phone.tracker;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.telephony.CellInfo;
+import android.telephony.NeighboringCellInfo;
 import android.util.Log;
 
 import com.fooock.lib.phone.tracker.Configuration;
 import com.fooock.lib.phone.tracker.PhoneTracker;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create a new cell configuration
         Configuration.Cell cellConf = new Configuration.Cell();
+        cellConf.setScanDelay(1000);
 
         // Create a gps configuration
         Configuration.Gps gpsConf = new Configuration.Gps();
@@ -64,6 +69,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Set the new init configuration
         phoneTracker.setConfiguration(configuration);
+
+        // Set the listener for cell scans
+        phoneTracker.setCellScanListener(new PhoneTracker.CellScanListener() {
+            @Override
+            public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
+                Log.d(TAG, "timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
+            }
+
+            @Override
+            public void onNeighborCellReceived(long timestamp, List<NeighboringCellInfo> cells) {
+                Log.d(TAG, "timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
+            }
+        });
     }
 
     @Override
@@ -71,16 +89,21 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         phoneTracker.start();
 
-        // Create a new configuration
-        Configuration configuration = new Configuration.Builder()
-                .useCell(true)
-                .useWifi(true)
-                .useGps(true)
-                .useBluetooth(false)
-                .create();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Create a new configuration
+                Configuration configuration = new Configuration.Builder()
+                        .useCell(true)
+                        .useWifi(true)
+                        .useGps(true)
+                        .useBluetooth(false)
+                        .create();
 
-        // Update the current configuration
-        phoneTracker.updateConfiguration(configuration);
+                // Update the current configuration
+                phoneTracker.updateConfiguration(configuration);
+            }
+        }, 10000);
     }
 
     @Override

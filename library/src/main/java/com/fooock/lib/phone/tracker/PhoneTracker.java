@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.telephony.CellInfo;
+import android.telephony.NeighboringCellInfo;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class PhoneTracker {
      * Permissions used for gps and cell location. Note that for android >= 6 this permissions are
      * needed for scan wifi and bluetooth
      */
-    private static final String[] LOCATION_PERMISSIONS = new String[]{
+    static final String[] LOCATION_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
@@ -53,6 +55,7 @@ public class PhoneTracker {
     private BluetoothReceiver bluetoothReceiver;
     private Configuration configuration;
     private ConfigurationChangeListener configurationChangeListener;
+    private CellScanListener cellScanListener;
 
     /**
      * Listener to notify missing permissions
@@ -77,6 +80,34 @@ public class PhoneTracker {
          * @param configuration New configuration
          */
         void onConfigurationChange(Configuration configuration);
+    }
+
+    /**
+     * Listener to receive cell scans. Note that only one of the two methods of this
+     * interface can be called. This is because the method {@link #onCellInfoReceived(long, List)}
+     * is only called when the android version is greater than or equal to
+     * {@code android.os.Build.VERSION_CODES.JELLY_BEAN_MR1}, and the
+     * {@link #onNeighborCellReceived(long, List)} method only is called when the android version
+     * is minor to {@code android.os.Build.VERSION_CODES.JELLY_BEAN_MR1}
+     */
+    public interface CellScanListener {
+        /**
+         * Called when the cell scan is completed. This method only is called in android
+         * versions greater than or equal to {@code android.os.Build.VERSION_CODES.JELLY_BEAN_MR1}
+         *
+         * @param timestamp Current time in milliseconds when the scans are received
+         * @param cells     List of scanned cells, never null
+         */
+        void onCellInfoReceived(long timestamp, List<CellInfo> cells);
+
+        /**
+         * Called when the cell scan is completed. This method only is called in android
+         * versions minor to {@code android.os.Build.VERSION_CODES.JELLY_BEAN_MR1}
+         *
+         * @param timestamp Current time in milliseconds when the scans are received
+         * @param cells     List of scanned cells, never null
+         */
+        void onNeighborCellReceived(long timestamp, List<NeighboringCellInfo> cells);
     }
 
     /**
@@ -154,7 +185,8 @@ public class PhoneTracker {
             wifiReceiver.register();
         }
         if (usingCell) {
-            cellReceiver = new CellReceiver(configuration.cellConfiguration());
+            cellReceiver = new CellReceiver(
+                    context, configuration.cellConfiguration(), cellScanListener);
             cellReceiver.register();
         }
         if (usingGps) {
@@ -177,7 +209,7 @@ public class PhoneTracker {
     public void stop() {
         synchronized (lock) {
             if (!running) {
-                Log.w(TAG, "Not running, can't stop...");
+                Log.w(TAG, "Not running, can't stop ;-)");
                 return;
             }
         }
@@ -301,7 +333,7 @@ public class PhoneTracker {
         // If the old config is not using the cell but the new config yes, then start
         // the cell
         if (!configuration.usingCell() && conf.usingCell()) {
-            cellReceiver = new CellReceiver(conf.cellConfiguration());
+            cellReceiver = new CellReceiver(context, conf.cellConfiguration(), cellScanListener);
             cellReceiver.register();
 
             // Unregister the cell receiver if not needed more
@@ -346,5 +378,14 @@ public class PhoneTracker {
      */
     public void setConfigurationChangeListener(ConfigurationChangeListener listener) {
         this.configurationChangeListener = listener;
+    }
+
+    /**
+     * Set the listener to receive the cell scans
+     *
+     * @param cellScanListener Cell scan listener
+     */
+    public void setCellScanListener(CellScanListener cellScanListener) {
+        this.cellScanListener = cellScanListener;
     }
 }

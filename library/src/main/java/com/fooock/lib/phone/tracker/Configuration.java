@@ -159,7 +159,6 @@ public class Configuration {
             Wifi wifi = (Wifi) o;
 
             return scanDelay == wifi.scanDelay;
-
         }
 
         @Override
@@ -172,7 +171,32 @@ public class Configuration {
      *
      */
     public static class Cell {
+        private static final int SCAN_DEFAULT_DELAY = 7000;
 
+        private int scanDelay = SCAN_DEFAULT_DELAY;
+
+        public int getScanDelay() {
+            return scanDelay;
+        }
+
+        public void setScanDelay(int scanDelay) {
+            this.scanDelay = scanDelay;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Cell cell = (Cell) o;
+
+            return scanDelay == cell.scanDelay;
+        }
+
+        @Override
+        public int hashCode() {
+            return scanDelay;
+        }
     }
 
     /**
