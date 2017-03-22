@@ -111,6 +111,19 @@ public class PhoneTracker {
     }
 
     /**
+     * Adapter class for {@link CellScanListener}
+     */
+    public static abstract class CellScanAdapter implements CellScanListener {
+        @Override
+        public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
+        }
+
+        @Override
+        public void onNeighborCellReceived(long timestamp, List<NeighboringCellInfo> cells) {
+        }
+    }
+
+    /**
      * Create the phone tracker
      *
      * @param context Application context

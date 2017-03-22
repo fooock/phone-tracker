@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
             }
         });
+
+        // Also you can use and cell listener adapter
+        phoneTracker.setCellScanListener(new PhoneTracker.CellScanAdapter() {
+            @Override
+            public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
+                Log.d(TAG, "[+] timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
+            }
+        });
     }
 
     @Override
