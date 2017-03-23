@@ -1,5 +1,6 @@
 package com.fooock.lib.phone.tracker;
 
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -8,10 +9,16 @@ import android.util.Log;
 class WifiReceiver implements EnvironmentReceiver<Configuration.Wifi> {
     private static final String TAG = WifiReceiver.class.getSimpleName();
 
+    private final Context context;
+    private final PhoneTracker.WifiScanListener wifiScanListener;
+
     private Configuration.Wifi wifiConfiguration;
 
-    WifiReceiver(Configuration.Wifi wifiConfiguration) {
+    WifiReceiver(Context context, Configuration.Wifi wifiConfiguration,
+                 PhoneTracker.WifiScanListener wifiScanListener) {
+        this.context = context;
         this.wifiConfiguration = wifiConfiguration;
+        this.wifiScanListener = wifiScanListener;
     }
 
     @Override

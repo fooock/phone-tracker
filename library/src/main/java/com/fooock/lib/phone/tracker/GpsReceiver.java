@@ -1,5 +1,6 @@
 package com.fooock.lib.phone.tracker;
 
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -8,10 +9,16 @@ import android.util.Log;
 class GpsReceiver implements EnvironmentReceiver<Configuration.Gps> {
     private static final String TAG = GpsReceiver.class.getSimpleName();
 
+    private final Context context;
+    private final PhoneTracker.GpsLocationListener gpsLocationListener;
+
     private Configuration.Gps gpsConfiguration;
 
-    GpsReceiver(Configuration.Gps gpsConfiguration) {
+    GpsReceiver(Context context, Configuration.Gps gpsConfiguration,
+                PhoneTracker.GpsLocationListener gpsLocationListener) {
+        this.context = context;
         this.gpsConfiguration = gpsConfiguration;
+        this.gpsLocationListener = gpsLocationListener;
     }
 
     @Override

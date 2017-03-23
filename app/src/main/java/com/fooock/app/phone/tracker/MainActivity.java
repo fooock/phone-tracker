@@ -1,5 +1,7 @@
 package com.fooock.app.phone.tracker;
 
+import android.location.Location;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -88,6 +90,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
                 Log.d(TAG, "[+] timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
+            }
+        });
+
+        // Set the listener to receive wifi scans
+        phoneTracker.setWifiScanListener(new PhoneTracker.WifiScanListener() {
+            @Override
+            public void onWifiScansReceived(long timestamp, List<ScanResult> wifiScans) {
+                Log.d(TAG, "timestamp = [" + timestamp + "], wifiScans = [" + wifiScans + "]");
+            }
+        });
+
+        // Set the listener to receive location updates from gps
+        phoneTracker.setGpsLocationListener(new PhoneTracker.GpsLocationListener() {
+            @Override
+            public void onLocationReceived(long timestamp, Location location) {
+                Log.d(TAG, "timestamp = [" + timestamp + "], location = [" + location + "]");
+            }
+        });
+
+        // Set the listener to receive bluetooth scans
+        phoneTracker.setBluetoothScanListener(new PhoneTracker.BluetoothScanListener() {
+            @Override
+            public void onBluetoothScanReceived(long timestamp,
+                                                List<android.bluetooth.le.ScanResult> scanResults) {
+                Log.d(TAG, "timestamp = [" + timestamp + "], scanResults = [" + scanResults + "]");
             }
         });
     }

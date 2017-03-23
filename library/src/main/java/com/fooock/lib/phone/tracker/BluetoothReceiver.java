@@ -1,5 +1,6 @@
 package com.fooock.lib.phone.tracker;
 
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -8,10 +9,16 @@ import android.util.Log;
 class BluetoothReceiver implements EnvironmentReceiver<Configuration.Bluetooth> {
     private static final String TAG = BluetoothReceiver.class.getSimpleName();
 
+    private final Context context;
+    private final PhoneTracker.BluetoothScanListener bluetoothScanListener;
+
     private Configuration.Bluetooth bluetoothConfiguration;
 
-    BluetoothReceiver(Configuration.Bluetooth bluetoothConfiguration) {
+    BluetoothReceiver(Context context, Configuration.Bluetooth bluetoothConfiguration,
+                      PhoneTracker.BluetoothScanListener bluetoothScanListener) {
+        this.context = context;
         this.bluetoothConfiguration = bluetoothConfiguration;
+        this.bluetoothScanListener = bluetoothScanListener;
     }
 
     @Override

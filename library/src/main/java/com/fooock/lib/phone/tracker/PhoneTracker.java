@@ -2,6 +2,8 @@ package com.fooock.lib.phone.tracker;
 
 import android.Manifest;
 import android.content.Context;
+import android.location.Location;
+import android.net.wifi.ScanResult;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.telephony.CellInfo;
@@ -54,8 +56,12 @@ public class PhoneTracker {
     private GpsReceiver gpsReceiver;
     private BluetoothReceiver bluetoothReceiver;
     private Configuration configuration;
+
     private ConfigurationChangeListener configurationChangeListener;
     private CellScanListener cellScanListener;
+    private WifiScanListener wifiScanListener;
+    private GpsLocationListener gpsLocationListener;
+    private BluetoothScanListener bluetoothScanListener;
 
     /**
      * Listener to notify missing permissions
@@ -121,6 +127,45 @@ public class PhoneTracker {
         @Override
         public void onNeighborCellReceived(long timestamp, List<NeighboringCellInfo> cells) {
         }
+    }
+
+    /**
+     * Listener to receive wifi scans
+     */
+    public interface WifiScanListener {
+        /**
+         * Called when the wifi scan is completed
+         *
+         * @param timestamp Current time in milliseconds when the wifi scans are received
+         * @param wifiScans List of wifi scans. Never null
+         */
+        void onWifiScansReceived(long timestamp, List<ScanResult> wifiScans);
+    }
+
+    /**
+     * Listener to receive location updates from the gps
+     */
+    public interface GpsLocationListener {
+        /**
+         * Called when the location update is received
+         *
+         * @param timestamp Current time in milliseconds when the location is received
+         * @param location  Current device location
+         */
+        void onLocationReceived(long timestamp, Location location);
+    }
+
+    /**
+     * Listener to receive bluetooth low energy scans
+     */
+    public interface BluetoothScanListener {
+        /**
+         * Called when the bluetooth low energy scans are received
+         *
+         * @param timestamp   Current time in milliseconds when the scans are received
+         * @param scanResults List of bluetooth scans. Never null
+         */
+        void onBluetoothScanReceived(long timestamp, List<android.bluetooth.le.ScanResult> scanResults);
     }
 
     /**
@@ -194,7 +239,8 @@ public class PhoneTracker {
         }
 
         if (usingWifi) {
-            wifiReceiver = new WifiReceiver(configuration.wifiConfiguration());
+            wifiReceiver = new WifiReceiver(
+                    context, configuration.wifiConfiguration(), wifiScanListener);
             wifiReceiver.register();
         }
         if (usingCell) {
@@ -203,11 +249,13 @@ public class PhoneTracker {
             cellReceiver.register();
         }
         if (usingGps) {
-            gpsReceiver = new GpsReceiver(configuration.gpsConfiguration());
+            gpsReceiver = new GpsReceiver(
+                    context, configuration.gpsConfiguration(), gpsLocationListener);
             gpsReceiver.register();
         }
         if (usingBluetooth) {
-            bluetoothReceiver = new BluetoothReceiver(configuration.bluetoothConfiguration());
+            bluetoothReceiver = new BluetoothReceiver(
+                    context, configuration.bluetoothConfiguration(), bluetoothScanListener);
             bluetoothReceiver.register();
         }
         synchronized (lock) {
@@ -314,7 +362,7 @@ public class PhoneTracker {
         // If the old config is not using the wifi but the new config yes, then start
         // the wifi
         if (!configuration.usingWifi() && conf.usingWifi()) {
-            wifiReceiver = new WifiReceiver(conf.wifiConfiguration());
+            wifiReceiver = new WifiReceiver(context, conf.wifiConfiguration(), wifiScanListener);
             wifiReceiver.register();
 
             // Unregister the wifi receiver if not needed more
@@ -330,7 +378,7 @@ public class PhoneTracker {
         // If the old config is not using the gps but the new config yes, then start
         // the gps
         if (!configuration.usingGps() && conf.usingGps()) {
-            gpsReceiver = new GpsReceiver(conf.gpsConfiguration());
+            gpsReceiver = new GpsReceiver(context, conf.gpsConfiguration(), gpsLocationListener);
             gpsReceiver.register();
 
             // Unregister the gps receiver if not needed more
@@ -362,7 +410,8 @@ public class PhoneTracker {
         // If the old config is not using the bluetooth but the new config yes, then start
         // the bluetooth
         if (!configuration.usingBluetooth() && conf.usingBluetooth()) {
-            bluetoothReceiver = new BluetoothReceiver(conf.bluetoothConfiguration());
+            bluetoothReceiver = new BluetoothReceiver(
+                    context, conf.bluetoothConfiguration(), bluetoothScanListener);
             bluetoothReceiver.register();
 
             // Unregister the bluetooth receiver if not needed more
@@ -400,5 +449,32 @@ public class PhoneTracker {
      */
     public void setCellScanListener(CellScanListener cellScanListener) {
         this.cellScanListener = cellScanListener;
+    }
+
+    /**
+     * Set the listener to receive wifi scans
+     *
+     * @param wifiScanListener Wifi scan listener
+     */
+    public void setWifiScanListener(WifiScanListener wifiScanListener) {
+        this.wifiScanListener = wifiScanListener;
+    }
+
+    /**
+     * Set the listener to receive location updates
+     *
+     * @param gpsLocationListener Gps location listener
+     */
+    public void setGpsLocationListener(GpsLocationListener gpsLocationListener) {
+        this.gpsLocationListener = gpsLocationListener;
+    }
+
+    /**
+     * Set the listener to receive bluetooth scans
+     *
+     * @param bluetoothScanListener Bluetooth scan listener
+     */
+    public void setBluetoothScanListener(BluetoothScanListener bluetoothScanListener) {
+        this.bluetoothScanListener = bluetoothScanListener;
     }
 }
