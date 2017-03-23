@@ -74,7 +74,6 @@ class GpsReceiver implements EnvironmentReceiver<Configuration.Gps> {
     }
 
     private void registerProvider(String provider) {
-        Log.d(TAG, "Register provider: " + provider);
         locationManager.requestLocationUpdates(provider, gpsConfiguration.getMinTimeUpdate(),
                 gpsConfiguration.getMinDistanceUpdate(), locationListener);
     }

@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         phoneTracker.setWifiScanListener(new PhoneTracker.WifiScanListener() {
             @Override
             public void onWifiScansReceived(long timestamp, List<ScanResult> wifiScans) {
-                Log.d(TAG, "timestamp = [" + timestamp + "], wifiScans = [" + wifiScans + "]");
+                Log.d(TAG, "timestamp = [" + timestamp + "], wifiScans = [" + wifiScans.size() + "]");
             }
         });
 
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onBluetoothScanReceived(long timestamp,
                                                 List<android.bluetooth.le.ScanResult> scanResults) {
-                Log.d(TAG, "timestamp = [" + timestamp + "], scanResults = [" + scanResults + "]");
+                Log.d(TAG, "timestamp = [" + timestamp + "], scanResults = [" + scanResults.size() + "]");
             }
         });
     }

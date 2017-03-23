@@ -31,8 +31,7 @@ public class PhoneTracker {
     /**
      * Permissions used to scan wifi AP's
      */
-    private static final String[] WIFI_PERMISSIONS = new String[]{
-            Manifest.permission.ACCESS_WIFI_STATE,
+    static final String[] WIFI_PERMISSIONS = new String[]{
             Manifest.permission.CHANGE_WIFI_STATE
     };
 
