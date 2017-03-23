@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Create a gps configuration
         Configuration.Gps gpsConf = new Configuration.Gps();
+        gpsConf.setMinDistanceUpdate(10);
+        gpsConf.setMinTimeUpdate(7000);
 
         // Create a bluetooth configuration
         Configuration.Bluetooth bluetoothConf = new Configuration.Bluetooth();

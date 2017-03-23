@@ -203,7 +203,46 @@ public class Configuration {
      *
      */
     public static class Gps {
+        private static final long MIN_TIME_UPDATES = 5000;
+        private static final float MIN_DISTANCE_UPDATES = 5;
 
+        private long minTimeUpdate = MIN_TIME_UPDATES;
+        private float minDistanceUpdate = MIN_DISTANCE_UPDATES;
+
+        public long getMinTimeUpdate() {
+            return minTimeUpdate;
+        }
+
+        public void setMinTimeUpdate(long minTimeUpdate) {
+            this.minTimeUpdate = minTimeUpdate;
+        }
+
+        public float getMinDistanceUpdate() {
+            return minDistanceUpdate;
+        }
+
+        public void setMinDistanceUpdate(float minDistanceUpdate) {
+            this.minDistanceUpdate = minDistanceUpdate;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Gps gps = (Gps) o;
+
+            if (minTimeUpdate != gps.minTimeUpdate) return false;
+            return minDistanceUpdate == gps.minDistanceUpdate;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (minTimeUpdate ^ (minTimeUpdate >>> 32));
+            result = 31 * result + (minDistanceUpdate != +0.0f
+                    ? Float.floatToIntBits(minDistanceUpdate) : 0);
+            return result;
+        }
     }
 
     /**
