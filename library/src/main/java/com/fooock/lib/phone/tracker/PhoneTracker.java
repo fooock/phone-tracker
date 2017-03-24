@@ -36,13 +36,6 @@ public final class PhoneTracker {
             Manifest.permission.CHANGE_WIFI_STATE
     };
 
-    /**
-     * Permissions used to scan for bluetooth
-     */
-    private static final String[] BLUETOOTH_PERMISSIONS = new String[]{
-            Manifest.permission.BLUETOOTH
-    };
-
     private final Context context;
     private final List<PermissionListener> permissionListeners = new ArrayList<>();
     private final CheckVersion checkVersion = new CheckVersion();

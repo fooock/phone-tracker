@@ -7,7 +7,7 @@ import android.os.Process;
 /**
  * Check for permission in the device
  */
-public class CheckPermission {
+class CheckPermission {
 
     private final Context context;
 
@@ -16,7 +16,7 @@ public class CheckPermission {
      *
      * @param context Application context
      */
-    public CheckPermission(Context context) {
+    CheckPermission(Context context) {
         this.context = context;
     }
 
@@ -26,7 +26,7 @@ public class CheckPermission {
      * @param permission permission to check
      * @return true if the permission is granted, false if not
      */
-    public boolean isEnabled(final String permission) {
+    boolean isEnabled(final String permission) {
         final int callingPermission = context.checkPermission(permission,
                 Process.myPid(), Process.myUid());
         return callingPermission == PackageManager.PERMISSION_GRANTED;
@@ -38,7 +38,7 @@ public class CheckPermission {
      * @param permissions Permissions to check
      * @return True if any of the permissions are granted, false otherwise
      */
-    public boolean hasAnyPermission(final String... permissions) {
+    boolean hasAnyPermission(final String... permissions) {
         boolean hasPermission = false;
         for (String permission : permissions) {
             if (isEnabled(permission)) {
@@ -54,7 +54,7 @@ public class CheckPermission {
      * @param permissions permissions to check
      * @return true if all permissions are enabled, false otherwise
      */
-    public boolean hasPermissions(final String... permissions) {
+    boolean hasPermissions(final String... permissions) {
         boolean hasAllPerms = true;
         for (String permission : permissions) {
             if (!isEnabled(permission)) {

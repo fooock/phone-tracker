@@ -5,7 +5,7 @@ import android.os.Build;
 /**
  * Check Android version
  */
-public class CheckVersion {
+class CheckVersion {
 
     /**
      * Check the given android version code in the current device
@@ -13,7 +13,7 @@ public class CheckVersion {
      * @param version android version code to check
      * @return true if the device is the specified version, false if not
      */
-    public boolean isEqualTo(final int version) {
+    boolean isEqualTo(final int version) {
         return Build.VERSION.SDK_INT == version;
     }
 
@@ -23,7 +23,7 @@ public class CheckVersion {
      * @param version android version code to check
      * @return true if the device version is equal or greater, false if not
      */
-    public boolean isEqualOrGreater(final int version) {
+    boolean isEqualOrGreater(final int version) {
         return Build.VERSION.SDK_INT >= version;
     }
 }
