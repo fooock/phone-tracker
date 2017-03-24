@@ -1,7 +1,9 @@
 package com.fooock.app.phone.tracker;
 
+import android.annotation.TargetApi;
 import android.location.Location;
 import android.net.wifi.ScanResult;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -77,11 +79,13 @@ public class MainActivity extends AppCompatActivity {
         // Set the listener for cell scans
         phoneTracker.setCellScanListener(new PhoneTracker.CellScanListener() {
             @Override
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
             public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
                 Log.d(TAG, "timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
             }
 
             @Override
+            @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
             public void onNeighborCellReceived(long timestamp, List<NeighboringCellInfo> cells) {
                 Log.d(TAG, "timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
             }
@@ -90,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         // Also you can use and cell listener adapter
         phoneTracker.setCellScanListener(new PhoneTracker.CellScanAdapter() {
             @Override
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
             public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
                 Log.d(TAG, "[+] timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
             }

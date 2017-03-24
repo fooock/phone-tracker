@@ -1,6 +1,7 @@
 package com.fooock.lib.phone.tracker;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.location.Location;
 import android.net.wifi.ScanResult;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  *
  */
-public class PhoneTracker {
+public final class PhoneTracker {
     private static final String TAG = PhoneTracker.class.getSimpleName();
 
     /**
@@ -103,6 +104,7 @@ public class PhoneTracker {
          * @param timestamp Current time in milliseconds when the scans are received
          * @param cells     List of scanned cells, never null
          */
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
         void onCellInfoReceived(long timestamp, List<CellInfo> cells);
 
         /**
@@ -112,6 +114,7 @@ public class PhoneTracker {
          * @param timestamp Current time in milliseconds when the scans are received
          * @param cells     List of scanned cells, never null
          */
+        @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
         void onNeighborCellReceived(long timestamp, List<NeighboringCellInfo> cells);
     }
 
