@@ -35,13 +35,6 @@ public class Configuration {
     }
 
     /**
-     * @return True if using bluetooth scanning, false if not
-     */
-    public boolean usingBluetooth() {
-        return builder.useBluetooth;
-    }
-
-    /**
      * @return The Wifi configuration
      */
     public Wifi wifiConfiguration() {
@@ -63,13 +56,6 @@ public class Configuration {
     }
 
     /**
-     * @return The bluetooth configuration
-     */
-    public Bluetooth bluetoothConfiguration() {
-        return builder.bluetoothConfiguration;
-    }
-
-    /**
      * Builder class to create the configuration
      */
     public static class Builder {
@@ -77,12 +63,10 @@ public class Configuration {
         private boolean useGps = true;
         private boolean useWifi = true;
         private boolean useCell = true;
-        private boolean useBluetooth;
 
         private Wifi wifiConfiguration = new Wifi();
         private Cell cellConfiguration = new Cell();
         private Gps gpsConfiguration = new Gps();
-        private Bluetooth bluetoothConfiguration = new Bluetooth();
 
         public Builder useGps(boolean useGps) {
             this.useGps = useGps;
@@ -99,11 +83,6 @@ public class Configuration {
             return this;
         }
 
-        public Builder useBluetooth(boolean useBluetooth) {
-            this.useBluetooth = useBluetooth;
-            return this;
-        }
-
         public Builder wifi(@NonNull Wifi wifiConf) {
             this.wifiConfiguration = wifiConf;
             return this;
@@ -116,11 +95,6 @@ public class Configuration {
 
         public Builder gps(@NonNull Gps gpsConf) {
             this.gpsConfiguration = gpsConf;
-            return this;
-        }
-
-        public Builder bluetooth(@NonNull Bluetooth bluetoothConf) {
-            this.bluetoothConfiguration = bluetoothConf;
             return this;
         }
 
@@ -243,12 +217,5 @@ public class Configuration {
                     ? Float.floatToIntBits(minDistanceUpdate) : 0);
             return result;
         }
-    }
-
-    /**
-     *
-     */
-    public static class Bluetooth {
-
     }
 }

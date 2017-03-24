@@ -62,15 +62,11 @@ public class MainActivity extends AppCompatActivity {
         gpsConf.setMinDistanceUpdate(10);
         gpsConf.setMinTimeUpdate(7000);
 
-        // Create a bluetooth configuration
-        Configuration.Bluetooth bluetoothConf = new Configuration.Bluetooth();
-
         // Create a new configuration
         Configuration configuration = new Configuration.Builder()
                 .useCell(true).cell(cellConf)
                 .useWifi(true).wifi(wifiConf)
                 .useGps(true).gps(gpsConf)
-                .useBluetooth(true).bluetooth(bluetoothConf)
                 .create();
 
         // Set the new init configuration
@@ -115,15 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "timestamp = [" + timestamp + "], location = [" + location + "]");
             }
         });
-
-        // Set the listener to receive bluetooth scans
-        phoneTracker.setBluetoothScanListener(new PhoneTracker.BluetoothScanListener() {
-            @Override
-            public void onBluetoothScanReceived(long timestamp,
-                                                List<android.bluetooth.le.ScanResult> scanResults) {
-                Log.d(TAG, "timestamp = [" + timestamp + "], scanResults = [" + scanResults.size() + "]");
-            }
-        });
     }
 
     @Override
@@ -138,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 Configuration configuration = new Configuration.Builder()
                         .useCell(true)
                         .useWifi(true)
-                        .useGps(true)
-                        .useBluetooth(false)
+                        .useGps(false)
                         .create();
 
                 // Update the current configuration

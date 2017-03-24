@@ -54,14 +54,12 @@ public final class PhoneTracker {
     private WifiReceiver wifiReceiver;
     private CellReceiver cellReceiver;
     private GpsReceiver gpsReceiver;
-    private BluetoothReceiver bluetoothReceiver;
     private Configuration configuration;
 
     private ConfigurationChangeListener configurationChangeListener;
     private CellScanListener cellScanListener;
     private WifiScanListener wifiScanListener;
     private GpsLocationListener gpsLocationListener;
-    private BluetoothScanListener bluetoothScanListener;
 
     /**
      * Listener to notify missing permissions
@@ -158,19 +156,6 @@ public final class PhoneTracker {
     }
 
     /**
-     * Listener to receive bluetooth low energy scans
-     */
-    public interface BluetoothScanListener {
-        /**
-         * Called when the bluetooth low energy scans are received
-         *
-         * @param timestamp   Current time in milliseconds when the scans are received
-         * @param scanResults List of bluetooth scans. Never null
-         */
-        void onBluetoothScanReceived(long timestamp, List<android.bluetooth.le.ScanResult> scanResults);
-    }
-
-    /**
      * Create the phone tracker
      *
      * @param context Application context
@@ -203,7 +188,6 @@ public final class PhoneTracker {
 
         final boolean usingWifi = configuration.usingWifi();
         final boolean usingGps = configuration.usingGps();
-        final boolean usingBluetooth = configuration.usingBluetooth();
         final boolean usingCell = configuration.usingCell();
 
         // Check for wifi scan permissions
@@ -219,15 +203,6 @@ public final class PhoneTracker {
         // Check for gps permissions
         if (usingGps) {
             if (equalOrGreaterM && !checkPermission.hasAnyPermission(LOCATION_PERMISSIONS)) {
-                notifyPermissionsNotGranted(LOCATION_PERMISSIONS);
-                return;
-            }
-        }
-        // Check for bluetooth scan permissions
-        if (usingBluetooth) {
-            if (equalOrGreaterM
-                    && !checkPermission.hasAnyPermission(LOCATION_PERMISSIONS)
-                    && !checkPermission.hasPermissions(BLUETOOTH_PERMISSIONS)) {
                 notifyPermissionsNotGranted(LOCATION_PERMISSIONS);
                 return;
             }
@@ -255,11 +230,6 @@ public final class PhoneTracker {
                     context, configuration.gpsConfiguration(), gpsLocationListener);
             gpsReceiver.register();
         }
-        if (usingBluetooth) {
-            bluetoothReceiver = new BluetoothReceiver(
-                    context, configuration.bluetoothConfiguration(), bluetoothScanListener);
-            bluetoothReceiver.register();
-        }
         synchronized (lock) {
             running = true;
         }
@@ -284,9 +254,6 @@ public final class PhoneTracker {
         }
         if (gpsReceiver != null) {
             gpsReceiver.unregister();
-        }
-        if (bluetoothReceiver != null) {
-            bluetoothReceiver.unregister();
         }
         removePermissionListener();
         Log.d(TAG, "Stopped tracker");
@@ -409,23 +376,6 @@ public final class PhoneTracker {
             cellReceiver.reloadConfiguration(conf.cellConfiguration());
         }
 
-        // If the old config is not using the bluetooth but the new config yes, then start
-        // the bluetooth
-        if (!configuration.usingBluetooth() && conf.usingBluetooth()) {
-            bluetoothReceiver = new BluetoothReceiver(
-                    context, conf.bluetoothConfiguration(), bluetoothScanListener);
-            bluetoothReceiver.register();
-
-            // Unregister the bluetooth receiver if not needed more
-        } else if (configuration.usingBluetooth() && !conf.usingBluetooth()) {
-            bluetoothReceiver.unregister();
-            bluetoothReceiver = null;
-
-            // Reload bluetooth configuration
-        } else if (configuration.usingBluetooth() && conf.usingBluetooth()) {
-            bluetoothReceiver.reloadConfiguration(conf.bluetoothConfiguration());
-        }
-
         // Change the configuration
         setConfiguration(conf);
 
@@ -469,14 +419,5 @@ public final class PhoneTracker {
      */
     public void setGpsLocationListener(GpsLocationListener gpsLocationListener) {
         this.gpsLocationListener = gpsLocationListener;
-    }
-
-    /**
-     * Set the listener to receive bluetooth scans
-     *
-     * @param bluetoothScanListener Bluetooth scan listener
-     */
-    public void setBluetoothScanListener(BluetoothScanListener bluetoothScanListener) {
-        this.bluetoothScanListener = bluetoothScanListener;
     }
 }
