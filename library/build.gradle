@@ -1,5 +1,31 @@
 apply plugin: 'com.android.library'
 
+String version = "0.1.0"
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'phone-tracker'
+
+    publishedGroupId = 'com.fooock'
+    libraryName = 'Phone tracker'
+    artifact = 'phone-tracker'
+
+    libraryDescription = 'Phone tracker is an Android library to gather environment signals, like cell towers, wifi access points and gps locations.'
+
+    siteUrl = 'https://github.com/fooock/phone-tracker'
+    gitUrl = 'https://github.com/fooock/phone-tracker.git'
+
+    libraryVersion = version
+
+    developerId = 'fooock'
+    developerName = 'newhouse'
+    developerEmail = 'nhitbh@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -8,7 +34,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -18,6 +44,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -30,3 +59,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.17'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

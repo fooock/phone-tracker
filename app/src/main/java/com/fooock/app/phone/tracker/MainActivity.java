@@ -5,7 +5,6 @@ import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.CellInfo;
 import android.telephony.NeighboringCellInfo;
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create a new cell configuration
         Configuration.Cell cellConf = new Configuration.Cell();
-        cellConf.setScanDelay(1000);
+        cellConf.setScanDelay(5000);
 
         // Create a gps configuration
         Configuration.Gps gpsConf = new Configuration.Gps();
@@ -87,15 +86,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Also you can use and cell listener adapter
-        phoneTracker.setCellScanListener(new PhoneTracker.CellScanAdapter() {
-            @Override
-            @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-            public void onCellInfoReceived(long timestamp, List<CellInfo> cells) {
-                Log.d(TAG, "[+] timestamp = [" + timestamp + "], cells = [" + cells.size() + "]");
-            }
-        });
-
         // Set the listener to receive wifi scans
         phoneTracker.setWifiScanListener(new PhoneTracker.WifiScanListener() {
             @Override
@@ -117,21 +107,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         phoneTracker.start();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Create a new configuration
-                Configuration configuration = new Configuration.Builder()
-                        .useCell(true)
-                        .useWifi(true)
-                        .useGps(false)
-                        .create();
-
-                // Update the current configuration
-                phoneTracker.updateConfiguration(configuration);
-            }
-        }, 10000);
     }
 
     @Override
