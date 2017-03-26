@@ -12,7 +12,7 @@ repositories {
 ```
 And in your dependencies block add this line
 ```
-compile 'com.fooock:phone-tracker:0.1.0'
+compile 'com.fooock:phone-tracker:0.1.1'
 ```
 
 ## Getting started
