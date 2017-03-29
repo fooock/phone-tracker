@@ -1,5 +1,5 @@
 # Phone tracker
-[ ![Download](https://api.bintray.com/packages/fooock/maven/phone-tracker/images/download.svg) ](https://bintray.com/fooock/maven/phone-tracker/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/fooock/maven/phone-tracker/images/download.svg) ](https://bintray.com/fooock/maven/phone-tracker/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Phone%20tracker-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/5476)
 
 Phone tracker is an Android library to gather environment signals, like cell towers, wifi access points and gps locations. You can configure how to scan. Also you can make hot configuring updates, and be notified when the configuration is updated, among other things.
 
