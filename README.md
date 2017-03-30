@@ -5,13 +5,13 @@ Phone tracker is an Android library to gather environment signals, like cell tow
 
 ## Installation
 For gradle based projects you need to add to your ```build.gradle```
-```
+```gradle
 repositories {
     jcenter()
 }
 ```
 And in your dependencies block add this line
-```
+```gradle
 compile 'com.fooock:phone-tracker:0.1.1'
 ```
 
