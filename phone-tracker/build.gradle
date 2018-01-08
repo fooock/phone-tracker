@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'org.sonarqube'
+apply plugin: 'com.jfrog.bintray'
 
-String version = "0.1.1"
+String versionNumber = "0.1.1"
 
 ext {
     bintrayRepo = 'maven'
@@ -15,7 +17,7 @@ ext {
     siteUrl = 'https://github.com/fooock/phone-tracker'
     gitUrl = 'https://github.com/fooock/phone-tracker.git'
 
-    libraryVersion = version
+    libraryVersion = versionNumber
 
     developerId = 'fooock'
     developerName = 'newhouse'
@@ -34,7 +36,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
-        versionName version
+        versionName versionNumber
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -53,7 +55,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:support-annotations:26.1.0'
+    implementation 'com.android.support:support-annotations:27.0.2'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.9.0'
@@ -63,5 +65,49 @@ dependencies {
     })
 }
 
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+bintray {
+    user = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintray.apiyey') ? project.property('bintray.apiyey') : System.getenv('BINTRAY_API_KEY')
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            name = libraryVersion
+            desc = libraryDescription
+            gpg {
+                sign = true
+                passphrase = project.hasProperty('bintray.gpg.password') ? project.property('bintray.gpg.password') : System.getenv('BINTRAY_GPG')
+            }
+        }
+    }
+}
+
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
