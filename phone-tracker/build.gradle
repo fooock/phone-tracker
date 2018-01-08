@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'org.sonarqube'
 apply plugin: 'com.jfrog.bintray'
 
-String versionNumber = "0.1.1"
+String versionNumber = "0.2.0"
 
 ext {
     bintrayRepo = 'maven'
