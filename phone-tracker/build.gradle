@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'org.sonarqube'
 apply plugin: 'com.jfrog.bintray'
 
-String versionNumber = "0.2.0"
+version = "0.2.1"
 
 ext {
     bintrayRepo = 'maven'
@@ -17,7 +17,7 @@ ext {
     siteUrl = 'https://github.com/fooock/phone-tracker'
     gitUrl = 'https://github.com/fooock/phone-tracker.git'
 
-    libraryVersion = versionNumber
+    libraryVersion = version
 
     developerId = 'fooock'
     developerName = 'newhouse'
@@ -36,7 +36,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
-        versionName versionNumber
+        versionName version
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -100,10 +100,10 @@ bintray {
         publish = true
         publicDownloadNumbers = true
         version {
-            name = libraryVersion
+            name = "0.2.1"
             desc = libraryDescription
             gpg {
-                sign = true
+                sign = false
                 passphrase = project.hasProperty('bintray.gpg.password') ? project.property('bintray.gpg.password') : System.getenv('BINTRAY_GPG')
             }
         }

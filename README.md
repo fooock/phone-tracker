@@ -12,7 +12,7 @@ repositories {
 ```
 And in your dependencies block add this line
 ```gradle
-compile 'com.fooock:phone-tracker:0.2.0'
+compile 'com.fooock:phone-tracker:0.2.1'
 ```
 
 ## Getting started
